@@ -9,8 +9,8 @@
 
 #include "individual.h"
 
-int PopSize = 5000;
-int gmax = 50000;
+int PopSize = 1000;
+int gmax = 5000;
 int tmax = 5;
 
 //Mutation
@@ -28,8 +28,8 @@ const double A = 1.0;   //Deterministic scaling constant, default value
 const double B = 0.0;   //stochastic scaling constant, default value
 
 //R between 1 and 100000, P between 0 and 1
-std::vector<double> vecR = { 1.0, pow(10.0, 0.5), 10.0, pow(10.0, 1.5), 100.0, pow(10.0, 2.5), 1000.0, pow(10.0, 3.5), 10000.0, pow(10.0, 4.5), 100000.0 };
-std::vector<double> vecP = { 0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0 };
+std::vector<double> vecR = { 1.0, pow(10.0, 0.5), 10.0, pow(10.0, 1.5)};
+std::vector<double> vecP = { 0.0, 0.2, 0.4, 0.6, 0.8, 1.0 };
 //std::vector<double> vecR = { 1.0 };
 //std::vector<double> vecP = { 1.0 };
 std::bernoulli_distribution RandomChance(0.5);
