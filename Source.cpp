@@ -3,13 +3,14 @@
 #include <iostream>
 #include <vector>
 #include <cmath>
-#include<numeric>
+#include <numeric>
 #include <fstream>
 #include <string>
 
 #include "individual.h"
+#include <cassert>
 
-int PopSize = 1000;
+int PopSize = 5000;
 int gmax = 1000;
 int tmax = 5;
 
@@ -87,9 +88,20 @@ void reproduction(std::vector<Individual>& OffspringMale, std::vector<Individual
 //
 //}
 
-int main() {
+void test_deathrate() {
+    Individual this_id;
+    double this_deathrate = this_id.calculate_deathrate(0.01, 0.02, 0.25);
+    assert(this_deathrate > 0.0 && this_deathrate <= 1.0f && "test_deathrate: bad deathrate");
 
-    for (int Seed = 0; Seed < 1; Seed++) {
+    std::cout << "tested deathrate function\n";
+}
+
+int main() {
+    std::cout << M_PI << "\n";
+
+    test_deathrate();
+
+    for (int Seed = 0; Seed < 5; Seed++) {
         rng.seed(Seed);
         std::cout << "Seed Nr: " << Seed << std::endl;
         //double R = 10.f;  //Environmental variation

@@ -1,4 +1,5 @@
 #include "individual.h"
+#include <cassert>
 
 Individual::Individual() {
     h = 1.0;
@@ -68,7 +69,6 @@ void Individual::update_I_g(double C) {
     }
 }
 
-
 double Individual::calculate_deathrate(double kd, double ka, double tau) {
     double deathrate;
     if (s > 0.5) {
@@ -77,6 +77,7 @@ double Individual::calculate_deathrate(double kd, double ka, double tau) {
     else {
         deathrate = 1.0 - exp(-tau * mismatch);
     }
+    assert((deathrate > 0.0) && (deathrate <= 1.0) && "calc_deathrate: bad deathrate");
     return deathrate;
 }
 
