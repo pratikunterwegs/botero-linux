@@ -9,8 +9,6 @@
 
 #include "individual.h"
 
-
-
 int PopSize = 5000;
 int gmax = 50000;
 int tmax = 5;
@@ -35,8 +33,6 @@ std::vector<double> vecP = { 0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1
 //std::vector<double> vecR = { 1.0 };
 //std::vector<double> vecP = { 1.0 };
 std::bernoulli_distribution RandomChance(0.5);
-
-
 
 void viability_selection(std::vector<Individual>& pop, double kd, double ka, double tau) {
     double death_rate;
@@ -91,54 +87,31 @@ void reproduction(std::vector<Individual>& OffspringMale, std::vector<Individual
 //
 //}
 
-
-
-
-
 int main() {
 
-    for (int Seed = 0; Seed < 10; Seed++) {
-
-
-
+    for (int Seed = 0; Seed < 1; Seed++) {
         rng.seed(Seed);
-
         std::cout << "Seed Nr: " << Seed << std::endl;
-
         //double R = 10.f;  //Environmental variation
         //double P = 1.f;   //predictability
         ///
         std::uniform_real_distribution<double> env_dist (-1.0, 1.0); // not explicitly stated in botero 2015
         double E;
         double Cue;
-
         const std::string outfile = "AverageValues_Seed_" + std::to_string(Seed) + ".csv";
         //const std::string outfile2 = "IndividualValues_Seed_" + std::to_string(Seed) + ".csv";
-
-
         std::ofstream ofs(outfile);
         //std::ofstream ofs2(outfile2);
-
-
         ofs << "Seed" << ';' << "R" << ';' << "P" << ';' << "h" << ';' << "I01" << ';' << "I02" << ';' << "b1" << ';' << "b2" << ';' << "s" << ';' << "a" << "\n";
         //ofs2 << "Seed" << ';' << "R" << ';' << "P" << ';' << "h" << ';' << "I01" << ';' << "I02" << ';' << "b1" << ';' << "b2" << ';' << "s" << ';' << "a" << ';' << "sex" << "\n";
-
-
         for (int r = 0; r < vecR.size(); ++r) {
-
             double R = vecR[r];
             std::cout << "R is " << R << std::endl;
-
             for (int p = 0; p < vecP.size(); ++p) {
-
                 double P = vecP[p];
                 std::cout << "P is " << P << std::endl;
-
-
-
                 std::vector<Individual> popMale(PopSize / 2); // population size: 5000
                 std::vector<Individual> popFemale(PopSize / 2); // population size: 5000
-
                 //Initialization
                 E = 0.0;
                 if (1.0 - P == 0.0) {
@@ -147,34 +120,24 @@ int main() {
                 else {
                     Cue = std::normal_distribution<double>(P * E, ((1.0 - P) / 3.0))(rng);
                 }
-
                 for (int i = 0; i < static_cast<int>(popMale.size()); i++) {
                     popMale[i].update_I_g(Cue);
                 }
-
                 for (int i = 0; i < static_cast<int>(popFemale.size()); i++) {
                     popFemale[i].update_I_g(Cue);
                 }
-
-
                 for (int g = 0; g < gmax; g++) {
-
                     ////std::cout << g << ';';
                     //std::cout << "generation" << ';' << g << std::endl;
                     //  for (int countingN = 0; countingN < pop.size(); countingN++) {
                     //      std::cout << "Time: "<<g<<", n of individual nr "<<countingN<<" of the new pop is: " << pop[countingN].n << std::endl;
                     //      std::cout << "Time: " << g << ", mismatch of individual nr " << countingN << " of the new pop is: " << pop[countingN].mismatch << std::endl;
                     //  }
-
-                    
-
                     for (int t = 0; t < tmax; t++) {
-
                         //update environment
                           //std::cout << "Loop t-time: n of first individual of new pop is: " << pop[0].n << std::endl;
 
                         E = A * std::sin((2.0 * static_cast<double>(M_PI) * static_cast<double>(static_cast<double>(g) * tmax + t)) / (static_cast<double>(tmax) * R)) + B * env_dist(rng);
-
                         //calculate cue
                         if (1.0 - P == 0.0) {
                             Cue = E;
@@ -183,33 +146,26 @@ int main() {
                             Cue = std::normal_distribution<double>(P * E, ((1.0 - P) / 3.0))(rng);
                         }
                         /// Is Cue calculated once for the whole population, or per individual?
-
                         //individual update
                         for (int i = 0; i < static_cast<int>(popMale.size()); ++i) {
-
                             popMale[i].update_I_t(Cue);         //Insulation
                             popMale[i].update_mismatch(E);      //phenotypic mismatch
 
                         }
                         for (int i = 0; i < static_cast<int>(popFemale.size()); ++i) {
-
                             popFemale[i].update_I_t(Cue);         //Insulation
                             popFemale[i].update_mismatch(E);      //phenotypic mismatch
 
                         }
-
                     }
 
                     // viability selection
                     viability_selection(popMale, kd, ka, tau);
                     viability_selection(popFemale, kd, ka, tau);
-
                     //Reproduction
                     std::vector<Individual> OffspringMale;
                     std::vector<Individual> OffspringFemale;
                     reproduction(OffspringMale, OffspringFemale, popMale, popFemale);
-
-
                     //Mutation & irreversible plasticity
                     for (int i = 0; i < static_cast<int>(OffspringMale.size()); i++) {
                         OffspringMale[i].mutate(mrate, mmean, mshape);
@@ -219,17 +175,13 @@ int main() {
                         OffspringFemale[i].mutate(mrate, mmean, mshape);
                         OffspringFemale[i].update_I_g(Cue);
                     }
-
                     //std::cout << "n of first individual of old pop is: " << pop[0].n << std::endl;
                     std::swap(popFemale, OffspringFemale);
                     std::swap(popMale, OffspringMale);
                     OffspringFemale.clear();
                     OffspringMale.clear();
                 }
-
                 //    std::string filetype = ".png";
-
-
                 //calculate population average
                 double sum_h = 0.0;
                 double sum_I01 = 0.0;
@@ -238,7 +190,6 @@ int main() {
                 double sum_b2 = 0.0;
                 double sum_s = 0.0;
                 double sum_a = 0.0;
-
                 for (int i = 0; i < static_cast<int>(popMale.size()); ++i) {
                     sum_h = sum_h + popMale[i].h;
                     sum_I01 = sum_I01 + popMale[i].I01;
@@ -249,7 +200,6 @@ int main() {
                     sum_a = sum_a + popMale[i].a;
 
                 }
-
                 for (int i = 0; i < static_cast<int>(popFemale.size()); ++i) {
 
                     sum_h = sum_h + popFemale[i].h;
@@ -261,7 +211,6 @@ int main() {
                     sum_a = sum_a + popFemale[i].a;
 
                 }
-
                 double average_h = sum_h / static_cast <double> (PopSize);
                 double average_I01 = sum_I01 / static_cast <double> (PopSize);
                 double average_I02 = sum_I02 / static_cast <double> (PopSize);
@@ -283,16 +232,11 @@ int main() {
                     ofs2 << Seed << ';' << R << ';' << P << ';' << popFemale[i].h << ';' << popFemale[i].I01 << ';' << popFemale[i].I02 << ';' << popFemale[i].b1 << ';' << popFemale[i].b2 << ';' << popFemale[i].s << ';' << popFemale[i].a << ';' << "female" << "\n";
 
                 }*/
-
             }
-
         }
-
         ofs.close();
         //ofs2.close();
-
     }
-
     return 0;
 }
 
