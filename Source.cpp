@@ -10,7 +10,7 @@
 #include "individual.h"
 
 int PopSize = 1000;
-int gmax = 5000;
+int gmax = 1000;
 int tmax = 5;
 
 //Mutation
@@ -98,7 +98,7 @@ int main() {
         std::uniform_real_distribution<double> env_dist (-1.0, 1.0); // not explicitly stated in botero 2015
         double E;
         double Cue;
-        const std::string outfile = "AverageValues_Seed_" + std::to_string(Seed) + ".csv";
+        const std::string outfile = "data/AverageValues_Seed_" + std::to_string(Seed) + ".csv";
         //const std::string outfile2 = "IndividualValues_Seed_" + std::to_string(Seed) + ".csv";
         std::ofstream ofs(outfile);
         //std::ofstream ofs2(outfile2);
